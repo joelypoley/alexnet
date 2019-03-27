@@ -1,0 +1,14 @@
+trainingInput:
+  ######### example of hyper-parameter tuning config ##############
+  hyperparameters:
+    goal: MINIMIZE # Set to MINIMIZE or MAXIMIZE (e.g. rmse vs. accuracy)
+    hyperparameterMetricTag: loss # Set to the name of the metric you assigned to the estimator
+    enableTrialEarlyStopping: True
+    maxTrials: 5 
+    ######### params to tune ##############
+    params:
+    - parameterName: learning-rate
+      type: DOUBLE
+      minValue: 0.0001
+      maxValue: 1
+      scaleType: UNIT_LOG_SCALE

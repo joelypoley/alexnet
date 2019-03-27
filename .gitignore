@@ -1,2 +1,4 @@
 .ipynb_checkpoints
 trained_models
+trainer/__pycache__
+*.pyc
