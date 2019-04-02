@@ -27,7 +27,7 @@ gcloud ml-engine jobs submit training ${JOB_NAME} \
         --train=${TRAIN_FILES} \
         --batch-size=128\
         --eval=${EVAL_FILES} \
-        --learning-rate=0.001\
+        --learning-rate=0.01\
         --throttle-secs=1800\
         #--config=config.yaml \
 
