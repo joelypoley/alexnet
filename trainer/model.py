@@ -21,7 +21,11 @@ def model_fn(features, labels, mode, params):
     layer = tf.keras.layers.MaxPool2D(pool_size=3, strides=2)(layer)
 
     layer = tf.keras.layers.Conv2D(
-        filters=256, kernel_size=5, padding="same", activation=tf.keras.activations.relu
+        filters=256,
+        kernel_size=5,
+        padding="same",
+        bias_initializer="ones",
+        activation=tf.keras.activations.relu,
     )(layer)
     layer = tf.keras.layers.BatchNormalization()(layer)
     layer = tf.keras.layers.MaxPool2D(pool_size=3, strides=2)(layer)
@@ -31,19 +35,31 @@ def model_fn(features, labels, mode, params):
     )(layer)
 
     layer = tf.keras.layers.Conv2D(
-        filters=384, kernel_size=3, padding="same", activation=tf.keras.activations.relu
+        filters=384,
+        kernel_size=3,
+        padding="same",
+        bias_initializer="ones",
+        activation=tf.keras.activations.relu,
     )(layer)
 
     layer = tf.keras.layers.Conv2D(
-        filters=256, kernel_size=3, padding="same", activation=tf.keras.activations.relu
+        filters=256,
+        kernel_size=3,
+        padding="same",
+        bias_initializer="ones",
+        activation=tf.keras.activations.relu,
     )(layer)
     layer = tf.keras.layers.MaxPool2D(pool_size=3, strides=2)(layer)
 
     layer = tf.keras.layers.Flatten()(layer)
     layer = tf.keras.layers.Dropout(0.5)(layer)
-    layer = tf.keras.layers.Dense(4096, activation=tf.keras.activations.relu)(layer)
+    layer = tf.keras.layers.Dense(
+        4096, bias_initializer="ones", activation=tf.keras.activations.relu
+    )(layer)
     layer = tf.keras.layers.Dropout(0.5)(layer)
-    layer = tf.keras.layers.Dense(4096, activation=tf.keras.activations.relu)(layer)
+    layer = tf.keras.layers.Dense(
+        4096, bias_initializer="ones", activation=tf.keras.activations.relu
+    )(layer)
     logits = tf.keras.layers.Dense(1000)(layer)
 
     if mode == tf.estimator.ModeKeys.PREDICT:
@@ -71,7 +87,13 @@ def model_fn(features, labels, mode, params):
 def create_estimator():
     estimator = tf.estimator.Estimator(
         model_fn=model_fn,
-        params={"optimizer": tf.train.AdamOptimizer(task.FLAGS.learning_rate)},
+        params={
+            "optimizer": tf.contrib.opt.MomentumWOptimizer(
+                weight_decay=0.0005,
+                learning_rate=task.FLAGS.learning_rate,
+                momentum=0.9,
+            )
+        },
         model_dir=task.FLAGS.job_dir,
     )
     return estimator
